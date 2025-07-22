@@ -92,25 +92,43 @@ static
 }
 
 static
+ meas_record_lst_t fill_DRB_PacketSuccessRateUlgNBUu(ue_id_e2sm_t const* ue)
+{
+  assert(ue != NULL);
+  //printf("DRB.PacketSuccessRateUlgNBUu \n");
+  return fill_rnd_int_data();
+}
+
+static
+ meas_record_lst_t fill_DRB_RlcPacketDropRateDl(ue_id_e2sm_t const* ue)
+{
+  assert(ue != NULL);
+  //printf("DRB.RlcPacketDropRateDl \n");
+  return fill_rnd_int_data();
+}
+
+static
 assoc_ht_open_t ht;
 
 typedef meas_record_lst_t (*kpm_fp)(ue_id_e2sm_t const* ue);
 
-typedef struct{ 
-  const char* key; 
+typedef struct{
+  const char* key;
   kpm_fp value;
 } kv_measure_t;
 
 static
 const kv_measure_t lst_measure[] = {
-  (kv_measure_t){.key = "DRB.PdcpSduVolumeDL", .value = fill_DRB_PdcpSduVolumeDL }, 
-  (kv_measure_t){.key = "DRB.PdcpSduVolumeUL", .value = fill_DRB_PdcpSduVolumeUL },  
-  (kv_measure_t){.key = "DRB.RlcSduDelayDl", .value =  fill_DRB_RlcSduDelayDl }, 
-  (kv_measure_t){.key = "DRB.UEThpDl", .value =  fill_DRB_UEThpDl }, 
-  (kv_measure_t){.key = "DRB.UEThpUl", .value =  fill_DRB_UEThpUl }, 
-  (kv_measure_t){.key = "RRU.PrbTotDl", .value =  fill_RRU_PrbTotDl }, 
-  (kv_measure_t){.key = "RRU.PrbTotUl", .value =  fill_RRU_PrbTotUl }, 
-  }; 
+  (kv_measure_t){.key = "DRB.PdcpSduVolumeDL", .value = fill_DRB_PdcpSduVolumeDL },
+  (kv_measure_t){.key = "DRB.PdcpSduVolumeUL", .value = fill_DRB_PdcpSduVolumeUL },
+  (kv_measure_t){.key = "DRB.RlcSduDelayDl", .value =  fill_DRB_RlcSduDelayDl },
+  (kv_measure_t){.key = "DRB.UEThpDl", .value =  fill_DRB_UEThpDl },
+  (kv_measure_t){.key = "DRB.UEThpUl", .value =  fill_DRB_UEThpUl },
+  (kv_measure_t){.key = "RRU.PrbTotDl", .value =  fill_RRU_PrbTotDl },
+  (kv_measure_t){.key = "RRU.PrbTotUl", .value =  fill_RRU_PrbTotUl },
+  (kv_measure_t){.key = "DRB.PacketSuccessRateUlgNBUu", .value = fill_DRB_PacketSuccessRateUlgNBUu },
+  (kv_measure_t){.key = "DRB.RlcPacketDropRateDl", .value = fill_DRB_RlcPacketDropRateDl },
+  };
   // 3GPP TS 28.552
 
 static
