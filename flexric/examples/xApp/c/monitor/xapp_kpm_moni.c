@@ -87,7 +87,6 @@ log_ue_id log_ue_id_e2sm[END_UE_ID_E2SM] = {
 static
 void log_int_value(byte_array_t name, meas_record_lst_t meas_record)
 {
-  printf(meas_record)
   printf("[ENTERED LOG INT VALUE] ");
   // printf("[INT] %.*s = %d\n", (int)name.size, name.buf, meas_record.int_val);
   if (cmp_str_ba("RRU.PrbTotDl", name) == 0) {
