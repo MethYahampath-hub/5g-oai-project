@@ -86,6 +86,25 @@ static meas_record_lst_t fill_DRB_PdcpSduVolumeUL(__attribute__((unused))uint32_
 static uldlcounter_t last_rlc_pdu_total_bytes[MAX_MOBILES_PER_GNB] = {0};
 static uldlcounter_t last_total_prbs[MAX_MOBILES_PER_GNB] = {0};
 
+/* 3GPP TS 28.522 - section 5.1.2.2.2
+  note: this measurement is calculated as per spec */
+static meas_record_lst_t fill_DRB_PacketSuccessRateUlgNBUu(__attribute__((unused))uint32_t gran_period_ms, cudu_ue_info_pair_t ue_info, __attribute__((unused))const size_t ue_idx)
+{
+  meas_record_lst_t meas_record = {0};
+
+  // Get PDCP stats per DRB
+  const int rb_id = 1;  // at the moment, only 1 DRB is supported
+  nr_pdcp_statistics_t pdcp = get_pdcp_stats_per_drb(ue_info.rrc_ue_id, rb_id);
+
+  meas_record.value = REAL_MEAS_VALUE;
+
+  // TODO: this is not correct, but we don't have the required statistics yet
+  meas_record.real_val = 100.0;
+
+  return meas_record;
+}
+
+
 static nr_rlc_statistics_t get_rlc_stats_per_drb(const rnti_t rnti, const int rb_id)
 {
   nr_rlc_statistics_t rlc = {0};
@@ -99,6 +118,24 @@ static nr_rlc_statistics_t get_rlc_stats_per_drb(const rnti_t rnti, const int rb
   nr_rlc_activate_avg_time_to_tx(rnti, rb_id+3, 1);
   
   return rlc;  
+}
+
+/* 3GPP TS 28.522 - section 5.1.3.1.2
+  note: this measurement is calculated as per spec */
+static meas_record_lst_t fill_DRB_RlcPacketDropRateDl(__attribute__((unused))uint32_t gran_period_ms, cudu_ue_info_pair_t ue_info, __attribute__((unused))const size_t ue_idx)
+{
+  meas_record_lst_t meas_record = {0};
+
+  // Get RLC stats per DRB
+  const int rb_id = 1;  // at the moment, only 1 DRB is supported
+  nr_rlc_statistics_t rlc = get_rlc_stats_per_drb(ue_info.ue->rnti, rb_id);
+
+  meas_record.value = REAL_MEAS_VALUE;
+
+  // Get the value of sojourn time at the RLC buffer
+  meas_record.real_val = rlc.txsdu_discarded_bytes;  // [bytes]
+
+  return meas_record;
 }
 
 /* 3GPP TS 28.522 - section 5.1.3.3.3
@@ -192,16 +229,18 @@ static meas_record_lst_t fill_RRU_PrbTotUl(__attribute__((unused))uint32_t gran_
 #endif
 
 static kv_measure_t lst_measure[] = {
-  {.key = "DRB.PdcpSduVolumeDL", .value = fill_DRB_PdcpSduVolumeDL }, 
+  {.key = "DRB.PdcpSduVolumeDL", .value = fill_DRB_PdcpSduVolumeDL },
   {.key = "DRB.PdcpSduVolumeUL", .value = fill_DRB_PdcpSduVolumeUL },
 #if defined (NGRAN_GNB_DU)
-  {.key = "DRB.RlcSduDelayDl", .value =  fill_DRB_RlcSduDelayDl }, 
-  {.key = "DRB.UEThpDl", .value =  fill_DRB_UEThpDl }, 
-  {.key = "DRB.UEThpUl", .value =  fill_DRB_UEThpUl }, 
-  {.key = "RRU.PrbTotDl", .value =  fill_RRU_PrbTotDl }, 
-  {.key = "RRU.PrbTotUl", .value =  fill_RRU_PrbTotUl }, 
+  {.key = "DRB.RlcSduDelayDl", .value =  fill_DRB_RlcSduDelayDl },
+  {.key = "DRB.UEThpDl", .value =  fill_DRB_UEThpDl },
+  {.key = "DRB.UEThpUl", .value =  fill_DRB_UEThpUl },
+  {.key = "RRU.PrbTotDl", .value =  fill_RRU_PrbTotDl },
+  {.key = "RRU.PrbTotUl", .value =  fill_RRU_PrbTotUl },
+  {.key = "DRB.RlcPacketDropRateDl", .value = fill_DRB_RlcPacketDropRateDl},
+  {.key = "DRB.PacketSuccessRateUlgNBUu", .value = fill_DRB_PacketSuccessRateUlgNBUu},
 #endif
-}; 
+};
 
 void init_kpm_subs_data(void)
 {
