@@ -425,6 +425,7 @@ static const char* kpm_meas_du[] = {
   "DRB.UEThpUl",
   "RRU.PrbTotDl",
   "RRU.PrbTotUl",
+  "DRB.RlcPacketDropRateDl",
   NULL,
 };
 
@@ -436,6 +437,7 @@ static const char* kpm_meas_gnb[] = {
   "DRB.UEThpUl",
   "RRU.PrbTotDl",
   "RRU.PrbTotUl",
+  "DRB.PacketSuccessRateUlgNBUu",
   NULL,
 };
 
